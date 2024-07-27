@@ -465,7 +465,6 @@ function artistData() {
             <h5 class="card-title" style="color: white;">${e.singer}</h5>
             <p class="card-text" style="color: white;">Artist</p>
           </div>
-          
         </div>
       </a>
     `;
@@ -483,42 +482,12 @@ function fetchLocal() {
         <img src="${e.image}" class="card-img-top" alt="${e.name}" width="100%" height="250px">
         
         <!-- Button trigger modal -->
+        <button type="button" class="btn z-1 position-absolute" style="top: 10%; left:90%; transform: translate(-50%, -50%);">
+          <img src="./image/like.png" style="height: 30px; width: auto;">
+        </button>
         <button type="button" class="btn z-1 position-absolute play-button" style="top: 50%; left:80%; transform: translate(-50%, -50%);" data-bs-toggle="modal" data-bs-target="#staticBackdrop" data-image="${e.image}" data-title="${e.song}" data-name="${e.name}" data-url="${e.url}">
           <img src="./image/play-button (2).png" style="height: 50px; width: auto;">
         </button>
-        
-        <!-- Modal -->
-        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content" style="background: rgb(41,8,51);
-background: linear-gradient(90deg, rgba(41,8,51,1) 0%, rgba(37,0,138,1) 100%);
-">
-              
-              <div class="modal-body">
-                <div class="d-flex justify-content-end">
-                  <button type="button" class="btn " data-bs-dismiss="modal" aria-label="Close">
-                  <img src="./image/close.png" width="20px" height="20px"/>
-                  </button>
-                </div>
-                <img src="" id="modal-image" class="card-img-top" alt="" width="auto" height="auto">
-                <div style="color:aqua">
-                  <h5 class="card-title" id="modal-title"></h5>
-                  <p class="card-text" id="modal-text"></p>
-                </div>
-                <div>
-                  <audio controls id="modal-audio">
-                    <source src="" type="audio/mpeg">
-                    Your browser does not support the audio tag.
-                  </audio>
-                </div>
-                <div class="d-flex justify-content-end">
-                  <button type="button" class="btn btn-secondary " data-bs-dismiss="modal">Close</button>
-                </div>
-              </div>
-              
-            </div>
-          </div>
-        </div>
         
         <div class="card-body" style="color:white">
           <h5 class="card-title">${e.song}</h5>
@@ -529,40 +498,7 @@ background: linear-gradient(90deg, rgba(41,8,51,1) 0%, rgba(37,0,138,1) 100%);
   });
   document.getElementById("albums").innerHTML = albumsHTML;
 
-  const audioElements = document.querySelectorAll("audio");
-  audioElements.forEach((audio) => {
-    audio.addEventListener("play", () => {
-      audioElements.forEach((otherAudio) => {
-        if (otherAudio !== audio) {
-          otherAudio.pause();
-        }
-      });
-    });
-  });
-
-  const modal = document.getElementById("staticBackdrop");
-  modal.addEventListener("show.bs.modal", function (event) {
-    const button = event.relatedTarget;
-    const image = button.getAttribute("data-image");
-    const title = button.getAttribute("data-title");
-    const name = button.getAttribute("data-name");
-    const url = button.getAttribute("data-url");
-
-    const modalImage = modal.querySelector("#modal-image");
-    const modalTitle = modal.querySelector("#modal-title");
-    const modalText = modal.querySelector("#modal-text");
-    const modalAudioSource = modal.querySelector("#modal-audio source");
-
-    modalImage.src = image;
-    modalImage.alt = name;
-    modalTitle.textContent = title;
-    modalText.textContent = name;
-    modalAudioSource.src = url;
-
-    const modalAudio = modal.querySelector("#modal-audio");
-    modalAudio.load();
-    modalAudio.play();
-  });
+  attachModalEventListeners();
 }
 
 function searchFun() {
@@ -578,14 +514,16 @@ function searchFun() {
       ) {
         filteredHTML += `
           <div class="card bg-dark" style="width: 18rem; position: relative; margin: 10px; box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px;">
-            <img src="${e.image}" class="card-img-top" alt="${
-          e.name
-        }" width="100%" height="250px">
+            <img src="${e.image}" class="card-img-top" alt="${e.name.join(
+          ", "
+        )}" width="100%" height="250px">
             
             <!-- Button trigger modal -->
             <button type="button" class="btn z-1 position-absolute play-button" style="top: 50%; left:80%; transform: translate(-50%, -50%);" data-bs-toggle="modal" data-bs-target="#staticBackdrop" data-image="${
               e.image
-            }" data-title="${e.song}" data-name="${e.name}" data-url="${e.url}">
+            }" data-title="${e.song}" data-name="${e.name.join(
+          ", "
+        )}" data-url="${e.url}">
               <img src="./image/play-button (2).png" style="height: 50px; width: auto;">
             </button>
             
@@ -602,42 +540,39 @@ function searchFun() {
   const searchResults = document.getElementById("search-results");
   searchResults.innerHTML = filteredHTML;
 
-  // if (searchQuery !== "" && filteredHTML !== "") {
-  //   document.getElementById("content").style.display = "none";
-  //   searchResults.style.display = "block";
-  // } else {
-  //   document.getElementById("content").style.display = "block";
-  //   searchResults.style.display = "none";
-  // }
   if (searchQuery) {
     document.getElementById("inner-content").style.display = "none";
   } else {
     document.getElementById("inner-content").style.display = "block";
   }
 
-  // Re-attach event listeners for the modal
-  const modal = document.getElementById("staticBackdrop");
-  modal.addEventListener("show.bs.modal", function (event) {
-    const button = event.relatedTarget;
-    const image = button.getAttribute("data-image");
-    const title = button.getAttribute("data-title");
-    const name = button.getAttribute("data-name");
-    const url = button.getAttribute("data-url");
+  attachModalEventListeners();
+}
 
-    const modalImage = modal.querySelector("#modal-image");
-    const modalTitle = modal.querySelector("#modal-title");
-    const modalText = modal.querySelector("#modal-text");
-    const modalAudioSource = modal.querySelector("#modal-audio source");
+function attachModalEventListeners() {
+  const playButtons = document.querySelectorAll(".play-button");
 
-    modalImage.src = image;
-    modalImage.alt = name;
-    modalTitle.textContent = title;
-    modalText.textContent = name;
-    modalAudioSource.src = url;
+  playButtons.forEach((button) => {
+    button.addEventListener("click", function () {
+      const image = this.getAttribute("data-image");
+      const title = this.getAttribute("data-title");
+      const name = this.getAttribute("data-name");
+      const url = this.getAttribute("data-url");
 
-    const modalAudio = modal.querySelector("#modal-audio");
-    modalAudio.load();
-    modalAudio.play();
+      const modalImage = document.getElementById("modal-image");
+      const modalTitle = document.getElementById("modal-title");
+      const modalText = document.getElementById("modal-text");
+      const modalAudioSource = document.querySelector("#modal-audio source");
+
+      modalImage.src = image;
+      modalImage.alt = name;
+      modalTitle.textContent = title;
+      modalText.textContent = name;
+      modalAudioSource.src = url;
+
+      const modalAudio = document.getElementById("modal-audio");
+      modalAudio.load();
+    });
   });
 }
 

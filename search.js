@@ -16,7 +16,7 @@
             <div class="card-body text-center">
               <h5 class="card-title">${music.song}</h5>
               <h5 class="card-title">${music.name}</h5>
-              <audio controls style="width: 200px;">
+              <audio controls style="max-width: 100%;">
                 <source src="${music.url}" type="audio/ogg">
                 <source src="${music.url}" type="audio/mpeg">
                 Your browser does not support the audio tag.
